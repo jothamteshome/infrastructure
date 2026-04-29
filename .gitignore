@@ -1,0 +1,36 @@
+# Local environment overrides
+.env
+*.env
+
+# TLS certificates and private keys — never commit these
+certs/
+*.pem
+*.key
+*.crt
+*.p12
+
+# CDK output
+cdk.out/
+
+# Python (CDK stacks, Lambda)
+__pycache__/
+*.pyc
+*.pyo
+.venv/
+*.egg-info/
+
+# Node (if CDK in TS ever gets added)
+node_modules/
+
+# Build artifacts
+*.tar.gz
+*.zip
+
+# Terraform (in case you ever add it)
+*.tfstate
+*.tfstate.backup
+.terraform/
+
+# OS
+.DS_Store
+Thumbs.db

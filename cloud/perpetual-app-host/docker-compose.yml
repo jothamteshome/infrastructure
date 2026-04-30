@@ -64,7 +64,7 @@ services:
       - BACKEND_PORT=${WATCH_TOGETHER_BACKEND_PORT}
       - YOUTUBE_API_KEY=${WATCH_TOGETHER_YOUTUBE_API_KEY}
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:${BACKEND_PORT}/health"]
+      test: ["CMD", "curl", "-f", "http://localhost:${WATCH_TOGETHER_BACKEND_PORT}/health"]
       interval: 5s
       retries: 5
 

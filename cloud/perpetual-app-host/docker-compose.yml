@@ -22,15 +22,12 @@ services:
       postgres:
         condition: service_healthy
 
-  # watch-together:
-  #   image: ghcr.io/jothamteshome/watch-together-backend:latest
-  #   restart: always
-  #   environment:
-  #     - ENV=production
-  #     - AWS_REGION=us-east-1
-  #   depends_on:
-  #     postgres:
-  #       condition: service_healthy
+  watch-together:
+    image: ghcr.io/jothamteshome/watch-together-backend:latest
+    restart: always
+    environment:
+      - ENV=production
+      - AWS_REGION=us-east-1
 
   nginx:
     image: nginx:alpine
@@ -41,8 +38,8 @@ services:
     volumes:
       - ./nginx/conf.d:/etc/nginx/conf.d:ro
       - /etc/letsencrypt:/etc/letsencrypt:ro
-    # depends_on:
-      # - watch-together
+    depends_on:
+      - watch-together
 
 volumes:
   postgres_data:

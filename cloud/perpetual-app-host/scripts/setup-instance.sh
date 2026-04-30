@@ -40,25 +40,43 @@ if ! crontab -l 2>/dev/null | grep -q certbot; then
     echo "Certbot renewal cron added"
 fi
 
-echo "=== Fetching postgres credentials from SSM ==="
+echo "=== Writing /etc/profile.d/init-env.sh ==="
+cat > /etc/profile.d/init-env.sh <<'EOF'
+#!/bin/bash
+# Auto-loaded on every login shell (Instance Connect, SSH)
+# Fetches shared infrastructure secrets from SSM into the current session
 export POSTGRES_USER=$(aws ssm get-parameter \
     --name "/perpetual-app-host/db/username" \
-    --with-decryption \
-    --query "Parameter.Value" \
-    --output text \
-    --region $AWS_REGION)
-
+    --with-decryption --query "Parameter.Value" --output text --region us-east-1 2>/dev/null)
 export POSTGRES_PASSWORD=$(aws ssm get-parameter \
     --name "/perpetual-app-host/db/password" \
-    --with-decryption \
-    --query "Parameter.Value" \
-    --output text \
-    --region $AWS_REGION)
+    --with-decryption --query "Parameter.Value" --output text --region us-east-1 2>/dev/null)
+EOF
+chmod +x /etc/profile.d/init-env.sh
+
+echo "=== Writing systemd service ==="
+cat > /etc/systemd/system/perpetual-app-host.service <<'EOF'
+[Unit]
+Description=Perpetual App Host (Docker Compose)
+After=docker.service network-online.target
+Requires=docker.service
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+WorkingDirectory=/opt/infrastructure/cloud/perpetual-app-host
+ExecStart=/bin/bash -c 'source /etc/profile.d/init-env.sh && docker compose up -d'
+ExecStop=/usr/bin/docker compose down
+
+[Install]
+WantedBy=multi-user.target
+EOF
+
+systemctl daemon-reload
+systemctl enable perpetual-app-host.service
 
 echo "=== Starting services ==="
-cd "$COMPOSE_DIR"
-docker compose pull
-docker compose up -d
+systemctl start perpetual-app-host.service
 
 echo "=== Done ==="
 echo "Run 'certbot certonly --nginx -d yourdomain.com' to issue SSL certificates"

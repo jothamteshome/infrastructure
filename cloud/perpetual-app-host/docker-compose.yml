@@ -18,6 +18,15 @@ services:
     environment:
       - ENV=production
       - AWS_REGION=us-east-1
+      - DB_USERNAME=${WHYMIGHTA_DB_USERNAME}
+      - DB_PASSWORD=${WHYMIGHTA_DB_PASSWORD}
+      - DB_HOST=${WHYMIGHTA_DB_HOST}
+      - DB_PORT=${WHYMIGHTA_DB_PORT}
+      - DB_DATABASE=${WHYMIGHTA_DB_DATABASE}
+      - AWS_CHATGPT_API_URL=${WHYMIGHTA_CHATGPT_API_URL}
+      - AWS_CHATGPT_API_KEY=${WHYMIGHTA_CHATGPT_API_KEY}
+      - WEATHER_API_KEY=${WHYMIGHTA_WEATHER_API_KEY}
+      - DISCORD_TOKEN=${WHYMIGHTA_DISCORD_TOKEN}
     depends_on:
       postgres:
         condition: service_healthy
@@ -26,8 +35,8 @@ services:
     image: ghcr.io/jothamteshome/watch-together-backend:latest
     restart: always
     environment:
-      - ENV=production
-      - AWS_REGION=us-east-1
+      - BACKEND_PORT=${WATCH_TOGETHER_BACKEND_PORT}
+      - YOUTUBE_API_KEY=${WATCH_TOGETHER_YOUTUBE_API_KEY}
 
   nginx:
     image: nginx:alpine

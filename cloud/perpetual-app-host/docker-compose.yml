@@ -1,0 +1,48 @@
+services:
+  postgres:
+    image: postgres:18
+    restart: always
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    volumes:
+      - postgres_data:/var/lib/postgresql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER}"]
+      interval: 5s
+      retries: 5
+
+  whymighta:
+    image: ghcr.io/jothamteshome/whymighta:latest
+    restart: always
+    environment:
+      - ENV=production
+      - AWS_REGION=us-east-1
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  # watch-together:
+  #   image: ghcr.io/jothamteshome/watch-together-backend:latest
+  #   restart: always
+  #   environment:
+  #     - ENV=production
+  #     - AWS_REGION=us-east-1
+  #   depends_on:
+  #     postgres:
+  #       condition: service_healthy
+
+  nginx:
+    image: nginx:alpine
+    restart: always
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx/conf.d:/etc/nginx/conf.d:ro
+      - /etc/letsencrypt:/etc/letsencrypt:ro
+    # depends_on:
+      # - watch-together
+
+volumes:
+  postgres_data:

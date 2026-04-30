@@ -41,6 +41,12 @@ if ! crontab -l 2>/dev/null | grep -q certbot; then
     echo "Certbot renewal cron added"
 fi
 
+# Set up DB backup cron if not already present
+if ! crontab -l 2>/dev/null | grep -q backup-db; then
+    (crontab -l 2>/dev/null; echo "0 2 * * * bash /opt/infrastructure/cloud/perpetual-app-host/scripts/backup-db.sh >> /var/log/db-backup.log 2>&1") | crontab -
+    echo "DB backup cron added"
+fi
+
 echo "=== Writing /etc/profile.d/init-env.sh ==="
 cat > /etc/profile.d/init-env.sh <<'EOF'
 #!/bin/bash

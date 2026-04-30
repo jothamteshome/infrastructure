@@ -36,10 +36,8 @@ else
 fi
 
 # Set up certbot auto-renewal cron if not already present
-if ! crontab -l 2>/dev/null | grep -q certbot; then
-    (crontab -l 2>/dev/null; echo "0 3 * * * certbot renew --quiet && docker kill -s HUP perpetual-app-host-nginx-1") | crontab -
-    echo "Certbot renewal cron added"
-fi
+(crontab -l 2>/dev/null | grep -v certbot; echo "0 3 * * * docker stop nginx && certbot renew --quiet ; docker start nginx") | crontab -
+echo "Certbot renewal cron set"
 
 # Set up DB backup cron if not already present
 if ! crontab -l 2>/dev/null | grep -q backup-db; then

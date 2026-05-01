@@ -18,6 +18,32 @@ services:
       interval: 5s
       retries: 5
 
+  db-init:
+    container_name: db-init
+    image: postgres:18
+    restart: "no"
+    deploy:
+      resources:
+        limits:
+          memory: 64m
+    logging:
+      driver: json-file
+      options:
+        max-size: "1m"
+        max-file: "1"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      - PGPASSWORD=${POSTGRES_PASSWORD}
+    entrypoint: ["/bin/sh", "-c"]
+    command:
+      - |
+        psql -h postgres -U "$POSTGRES_USER" -d postgres -c "CREATE USER \"$WHYMIGHTA_DB_USERNAME\" WITH PASSWORD '$WHYMIGHTA_DB_PASSWORD';" || true
+        psql -h postgres -U "$POSTGRES_USER" -d postgres -c "CREATE DATABASE \"$WHYMIGHTA_DB_DATABASE\" OWNER \"$WHYMIGHTA_DB_USERNAME\";" || true
+        psql -h postgres -U "$POSTGRES_USER" -d postgres -c "GRANT ALL PRIVILEGES ON DATABASE \"$WHYMIGHTA_DB_DATABASE\" TO \"$WHYMIGHTA_DB_USERNAME\";" || true
+        psql -h postgres -U "$POSTGRES_USER" -d postgres -c "ALTER DATABASE \"$WHYMIGHTA_DB_DATABASE\" OWNER TO \"$WHYMIGHTA_DB_USERNAME\";" || true
+
   whymighta:
     container_name: whymighta
     image: ghcr.io/jothamteshome/whymighta:latest
@@ -46,6 +72,8 @@ services:
     depends_on:
       postgres:
         condition: service_healthy
+      db-init:
+        condition: service_completed_successfully
 
   watch-together:
     container_name: watch-together

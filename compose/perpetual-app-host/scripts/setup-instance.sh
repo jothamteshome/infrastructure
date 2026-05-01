@@ -1,8 +1,8 @@
 #!/bin/bash
 set -e
 
-INFRA_DIR="/opt/infrastructure"
-COMPOSE_DIR="$INFRA_DIR/cloud/perpetual-app-host"
+INFRA_DIR="/opt/infra-hub"
+COMPOSE_DIR="$INFRA_DIR/compose/perpetual-app-host"
 AWS_REGION="us-east-1"
 
 echo "=== Installing Docker ==="
@@ -41,7 +41,7 @@ echo "Certbot renewal cron set"
 
 # Set up DB backup cron if not already present
 if ! crontab -l 2>/dev/null | grep -q backup-db; then
-    (crontab -l 2>/dev/null; echo "0 2 * * * bash /opt/infrastructure/cloud/perpetual-app-host/scripts/backup-db.sh >> /var/log/db-backup.log 2>&1") | crontab -
+    (crontab -l 2>/dev/null; echo "0 2 * * * bash /opt/infra-hub/compose/perpetual-app-host/scripts/backup-db.sh >> /var/log/db-backup.log 2>&1") | crontab -
     echo "DB backup cron added"
 fi
 
@@ -86,7 +86,7 @@ Requires=docker.service
 [Service]
 Type=oneshot
 RemainAfterExit=yes
-WorkingDirectory=/opt/infrastructure/cloud/perpetual-app-host
+WorkingDirectory=/opt/infra-hub/compose/perpetual-app-host
 ExecStart=/bin/bash -c 'source /etc/profile.d/init-env.sh && docker compose up -d'
 ExecStop=/usr/bin/docker compose down
 

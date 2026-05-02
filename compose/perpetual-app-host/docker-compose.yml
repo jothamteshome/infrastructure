@@ -133,9 +133,9 @@ services:
           memory: 256m
     environment:
       - TZ=America/New_York
-      - WEBPASSWORD="${PIHOLE_WEBPASSWORD}"
+      - FTLCONF_webserver_api_password=${PIHOLE_WEBPASSWORD}
       - FTLCONF_LOCAL_IPV4=10.13.13.100
-      - PIHOLE_DNS_=127.0.0.1#5335
+      - FTLCONF_dns_upstreams=127.0.0.1#5335
       - DNSSEC=true
       - DNSMASQ_LISTENING=all
     ports:

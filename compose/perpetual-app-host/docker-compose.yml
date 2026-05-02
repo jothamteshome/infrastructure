@@ -163,3 +163,4 @@ networks:
     ipam:
       config:
         - subnet: 10.13.13.0/24
+          ip_range: 10.13.13.128/25

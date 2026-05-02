@@ -154,11 +154,47 @@ services:
       options:
         max-size: "10m"
         max-file: "3"
+  
+  wireguard:
+    container_name: wireguard
+    image: linuxserver/wireguard:latest
+    restart: always
+    deploy:
+      resources:
+        limits:
+          memory: 64m
+    cap_add:
+      - NET_ADMIN
+      - SYS_MODULE
+    sysctls:
+      - net.ipv4.conf.all.src_valid_mark=1
+      - net.ipv4.ip_forward=1
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=America/New_York
+      - SERVERURL=${WIREGUARD_SERVERURL}
+      - SERVERPORT=51820
+      - PEERS=${WIREGUARD_PEERS}
+      - PEERDNS=10.13.13.2
+      - INTERNAL_SUBNET=10.13.13.0
+      - ALLOWEDIPS=10.13.13.0/24
+    volumes:
+      - wireguard_config:/config
+      - /lib/modules:/lib/modules:ro
+    ports:
+      - "51820:51820/udp"
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
 
 volumes:
   postgres_data:
   pihole_data:
   pihole_dnsmasq:
+  wireguard_config:
 
 networks:
   default:

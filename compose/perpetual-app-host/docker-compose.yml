@@ -1,7 +1,7 @@
 services:
   postgres:
     container_name: postgres
-    image: postgres:18
+    image: postgres:18-alpine
     restart: always
     deploy:
       resources:
@@ -24,7 +24,7 @@ services:
 
   db-init:
     container_name: db-init
-    image: postgres:18
+    image: postgres:18-alpine
     restart: "no"
     deploy:
       resources:

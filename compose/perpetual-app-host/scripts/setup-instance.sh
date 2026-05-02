@@ -102,6 +102,11 @@ export WATCH_TOGETHER_YOUTUBE_API_KEY=$(aws ssm get-parameter --name "/watch-tog
 echo "Fetching PiHole environment variables from AWS SSM..."
 export PIHOLE_WEBPASSWORD=$(aws ssm get-parameter --name "/pihole/webpassword" --with-decryption --query "Parameter.Value" --output text --region us-east-1 2>/dev/null)
 
+# wireguard
+echo "Fetching WireGuard environment variables from AWS SSM..."
+export WIREGUARD_SERVERURL=$(aws ssm get-parameter --name "/wireguard/serverurl" --with-decryption --query "Parameter.Value" --output text --region us-east-1 2>/dev/null)
+export WIREGUARD_PEERS=$(aws ssm get-parameter --name "/wireguard/peers" --with-decryption --query "Parameter.Value" --output text --region us-east-1 2>/dev/null)
+
 echo "All environment variables loaded from SSM!"
 EOF
 chmod +x /etc/profile.d/init-env.sh

@@ -189,12 +189,33 @@ services:
       options:
         max-size: "10m"
         max-file: "3"
+  
+  portainer:
+    container_name: portainer
+    image: portainer/portainer-ce:latest
+    restart: always
+    deploy:
+      resources:
+        limits:
+          memory: 256m
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - portainer_data:/data
+    networks:
+      default:
+        ipv4_address: 10.13.13.101
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
 
 volumes:
   postgres_data:
   pihole_data:
   pihole_dnsmasq:
   wireguard_config:
+  portainer_data:
 
 networks:
   default:

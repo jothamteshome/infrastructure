@@ -68,7 +68,6 @@ cat > /etc/profile.d/init-env.sh <<'EOF'
 echo "Fetching shared infrastructure environment variables from AWS SSM..."
 export POSTGRES_USER=$(aws ssm get-parameter --name "/perpetual-app-host/db/username" --with-decryption --query "Parameter.Value" --output text --region us-east-1 2>/dev/null)
 export POSTGRES_PASSWORD=$(aws ssm get-parameter --name "/perpetual-app-host/db/password" --with-decryption --query "Parameter.Value" --output text --region us-east-1 2>/dev/null)
-export PIHOLE_WEBPASSWORD=$(aws ssm get-parameter --name "/perpetual-app-host/pihole/webpassword" --with-decryption --query "Parameter.Value" --output text --region us-east-1 2>/dev/null)
 
 # whymighta
 echo "Fetching whymighta environment variables from AWS SSM..."
@@ -86,6 +85,10 @@ export WHYMIGHTA_DISCORD_TOKEN=$(aws ssm get-parameter --name "/whymighta/discor
 echo "Fetching Watch Together environment variables from AWS SSM..."
 export WATCH_TOGETHER_BACKEND_PORT=$(aws ssm get-parameter --name "/watch-together/backend/port" --with-decryption --query "Parameter.Value" --output text --region us-east-1 2>/dev/null)
 export WATCH_TOGETHER_YOUTUBE_API_KEY=$(aws ssm get-parameter --name "/watch-together/backend/youtube/api/key" --with-decryption --query "Parameter.Value" --output text --region us-east-1 2>/dev/null)
+
+# pihole
+echo "Fetching PiHole environment variables from AWS SSM..."
+export PIHOLE_WEBPASSWORD=$(aws ssm get-parameter --name "/pihole/webpassword" --with-decryption --query "Parameter.Value" --output text --region us-east-1 2>/dev/null)
 
 echo "All environment variables loaded from SSM!"
 EOF

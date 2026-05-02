@@ -35,6 +35,20 @@ else
     echo "Certbot already installed, skipping"
 fi
 
+echo "=== Configuring swap (512MB) ==="
+if [ ! -f /swapfile ]; then
+    fallocate -l 512M /swapfile
+    chmod 600 /swapfile
+    mkswap /swapfile
+    swapon /swapfile
+    echo '/swapfile none swap sw 0 0' >> /etc/fstab
+    echo 'vm.swappiness=10' >> /etc/sysctl.conf
+    sysctl -p
+    echo "Swap configured"
+else
+    echo "Swap already configured, skipping"
+fi
+
 # Set up certbot auto-renewal cron if not already present
 (crontab -l 2>/dev/null | grep -v certbot; echo "0 3 * * * docker stop nginx && certbot renew --quiet ; docker start nginx") | crontab -
 echo "Certbot renewal cron set"

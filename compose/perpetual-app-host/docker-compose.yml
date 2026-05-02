@@ -3,6 +3,10 @@ services:
     container_name: postgres
     image: postgres:18
     restart: always
+    deploy:
+      resources:
+        limits:
+          memory: 256m
     logging:
       driver: json-file
       options:
@@ -51,7 +55,7 @@ services:
     deploy:
       resources:
         limits:
-          memory: 512m
+          memory: 256m
     logging:
       driver: json-file
       options:
@@ -100,6 +104,10 @@ services:
     container_name: nginx
     image: nginx:alpine
     restart: always
+    deploy:
+      resources:
+        limits:
+          memory: 64m
     logging:
       driver: json-file
       options:

@@ -1,0 +1,35 @@
+name: Update latest tag for deployment workflow from latest commit push
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'static-sites/**'
+      - '.github/workflows/deploy-static-site.yml'
+
+jobs:
+  update-latest:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Configure Git
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+      - name: Update deploy-static-site-latest tag
+        run: |
+          echo "Updating 'deploy-static-site-latest' tag to $GITHUB_SHA"
+          # Delete local deploy-static-site-latest tag if it exists
+          git tag -f deploy-static-site-latest
+          
+          # Point deploy-static-site-latest tag to current commit
+          git tag -f deploy-static-site-latest $GITHUB_SHA
+          
+          # Push updated deploy-static-site-latest tag to origin
+          git push origin -f deploy-static-site-latest

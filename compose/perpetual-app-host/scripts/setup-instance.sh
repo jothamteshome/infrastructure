@@ -35,6 +35,18 @@ else
     echo "Certbot already installed, skipping"
 fi
 
+echo "=== Disabling systemd-resolved stub listener (frees port 53 for PiHole) ==="
+if [ ! -f /etc/systemd/resolved.conf.d/no-stub.conf ]; then
+    mkdir -p /etc/systemd/resolved.conf.d
+    printf "[Resolve]\nDNSStubListener=no\n" > /etc/systemd/resolved.conf.d/no-stub.conf
+    rm -f /etc/resolv.conf
+    ln -s /run/systemd/resolve/resolv.conf /etc/resolv.conf
+    systemctl restart systemd-resolved
+    echo "Stub listener disabled"
+else
+    echo "Stub listener already disabled, skipping"
+fi
+
 echo "=== Configuring swap (512MB) ==="
 if [ ! -f /swapfile ]; then
     fallocate -l 512M /swapfile

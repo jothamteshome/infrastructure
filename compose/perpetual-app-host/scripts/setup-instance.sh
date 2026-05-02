@@ -61,6 +61,15 @@ else
     echo "Swap already configured, skipping"
 fi
 
+echo "=== Loading WireGuard kernel module ==="
+if ! lsmod | grep -q wireguard; then
+    modprobe wireguard
+fi
+if ! grep -q wireguard /etc/modules-load.d/wireguard.conf 2>/dev/null; then
+    echo wireguard > /etc/modules-load.d/wireguard.conf
+fi
+echo "WireGuard kernel module loaded and configured for boot"
+
 # Set up certbot auto-renewal cron if not already present
 (crontab -l 2>/dev/null | grep -v certbot; echo "0 3 * * * docker stop nginx && certbot renew --quiet ; docker start nginx") | crontab -
 echo "Certbot renewal cron set"
@@ -134,6 +143,15 @@ systemctl enable perpetual-app-host.service
 
 echo "=== Starting services ==="
 systemctl start perpetual-app-host.service
+
+echo "=== Waiting for PiHole to be ready ==="
+until docker exec pihole pihole status 2>/dev/null | grep -q "FTL is listening"; do
+    echo "Waiting for PiHole FTL..."
+    sleep 5
+done
+echo "=== Running PiHole gravity update ==="
+docker exec pihole pihole -g
+echo "PiHole gravity update complete"
 
 echo "=== Done ==="
 echo "Run 'certbot certonly --nginx -d yourdomain.com' to issue SSL certificates"

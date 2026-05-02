@@ -134,7 +134,7 @@ services:
     environment:
       - TZ=America/New_York
       - WEBPASSWORD=${PIHOLE_WEBPASSWORD}
-      - FTLCONF_LOCAL_IPV4=10.13.13.2
+      - FTLCONF_LOCAL_IPV4=10.13.13.100
       - PIHOLE_DNS_=127.0.0.1#5335
       - DNSSEC=true
       - DNSMASQ_LISTENING=all
@@ -146,7 +146,7 @@ services:
       - pihole_dnsmasq:/etc/dnsmasq.d
     networks:
       default:
-        ipv4_address: 10.13.13.2
+        ipv4_address: 10.13.13.100
     dns:
       - 127.0.0.1
     logging:
@@ -176,7 +176,7 @@ services:
       - SERVERURL=${WIREGUARD_SERVERURL}
       - SERVERPORT=51820
       - PEERS=${WIREGUARD_PEERS}
-      - PEERDNS=10.13.13.2
+      - PEERDNS=10.13.13.100
       - INTERNAL_SUBNET=10.13.13.0
       - ALLOWEDIPS=10.13.13.0/24
     volumes:

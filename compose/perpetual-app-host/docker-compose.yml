@@ -138,6 +138,9 @@ services:
       - PIHOLE_DNS_=127.0.0.1#5335
       - DNSSEC=true
       - DNSMASQ_LISTENING=all
+    ports:
+      - "53:53/tcp"
+      - "53:53/udp"
     volumes:
       - pihole_data:/etc/pihole
       - pihole_dnsmasq:/etc/dnsmasq.d

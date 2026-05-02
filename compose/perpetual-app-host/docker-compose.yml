@@ -123,5 +123,43 @@ services:
       watch-together:
         condition: service_healthy
 
+  pihole:
+    container_name: pihole
+    image: mpgirro/pihole-unbound:latest
+    restart: always
+    deploy:
+      resources:
+        limits:
+          memory: 256m
+    environment:
+      - TZ=America/New_York
+      - WEBPASSWORD=${PIHOLE_WEBPASSWORD}
+      - FTLCONF_LOCAL_IPV4=10.13.13.2
+      - PIHOLE_DNS_=127.0.0.1#5335
+      - DNSSEC=true
+      - DNSMASQ_LISTENING=all
+    volumes:
+      - pihole_data:/etc/pihole
+      - pihole_dnsmasq:/etc/dnsmasq.d
+    networks:
+      default:
+        ipv4_address: 10.13.13.2
+    dns:
+      - 127.0.0.1
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
+
 volumes:
   postgres_data:
+  pihole_data:
+  pihole_dnsmasq:
+
+networks:
+  default:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 10.13.13.0/24

@@ -68,6 +68,7 @@ cat > /etc/profile.d/init-env.sh <<'EOF'
 echo "Fetching shared infrastructure environment variables from AWS SSM..."
 export POSTGRES_USER=$(aws ssm get-parameter --name "/perpetual-app-host/db/username" --with-decryption --query "Parameter.Value" --output text --region us-east-1 2>/dev/null)
 export POSTGRES_PASSWORD=$(aws ssm get-parameter --name "/perpetual-app-host/db/password" --with-decryption --query "Parameter.Value" --output text --region us-east-1 2>/dev/null)
+export PIHOLE_WEBPASSWORD=$(aws ssm get-parameter --name "/perpetual-app-host/pihole/webpassword" --with-decryption --query "Parameter.Value" --output text --region us-east-1 2>/dev/null)
 
 # whymighta
 echo "Fetching whymighta environment variables from AWS SSM..."

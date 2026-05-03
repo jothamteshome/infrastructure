@@ -6,17 +6,24 @@ from probes.minecraft import check_all_minecraft_servers
 from probes.sites import check_all_sites
 from probes.containers import get_container_stats
 
-CORS_HEADERS = {
-    "Content-Type": "application/json",
-    "Access-Control-Allow-Origin": "https://status.whymighta.net",
-    "Access-Control-Allow-Methods": "GET, OPTIONS",
-    "Access-Control-Allow-Headers": "Content-Type",
+ALLOWED_ORIGINS = {
+    "https://status.whymighta.net",
+    "http://localhost:5173",
 }
 
 
 async def main(event: dict) -> dict:
+    origin = (event.get("headers") or {}).get("origin", "")
+    allow_origin = origin if origin in ALLOWED_ORIGINS else "https://status.whymighta.net"
+    cors_headers = {
+        "Content-Type": "application/json",
+        "Access-Control-Allow-Origin": allow_origin,
+        "Access-Control-Allow-Methods": "GET, OPTIONS",
+        "Access-Control-Allow-Headers": "Content-Type",
+    }
+
     if event.get("requestContext", {}).get("http", {}).get("method") == "OPTIONS":
-        return {"statusCode": 204, "headers": CORS_HEADERS, "body": ""}
+        return {"statusCode": 204, "headers": cors_headers, "body": ""}
 
     minecraft, sites, containers = await asyncio.gather(
         check_all_minecraft_servers(),
@@ -33,7 +40,7 @@ async def main(event: dict) -> dict:
 
     return {
         "statusCode": 200,
-        "headers": CORS_HEADERS,
+        "headers": cors_headers,
         "body": json.dumps(body),
     }
 

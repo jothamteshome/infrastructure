@@ -31,10 +31,10 @@ jobs:
     
     steps:
       - name: Checkout React repo
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Checkout Infra repo
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           repository: jothamteshome/infra-hub
           path: infra

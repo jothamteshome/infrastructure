@@ -97,8 +97,10 @@ export WHYMIGHTA_DB_PASSWORD=$(aws ssm get-parameter --name "/whymighta/db/passw
 export WHYMIGHTA_DB_HOST=$(aws ssm get-parameter --name "/whymighta/db/host" --with-decryption --query "Parameter.Value" --output text --region us-east-1 2>/dev/null)
 export WHYMIGHTA_DB_PORT=$(aws ssm get-parameter --name "/whymighta/db/port" --with-decryption --query "Parameter.Value" --output text --region us-east-1 2>/dev/null)
 export WHYMIGHTA_DB_DATABASE=$(aws ssm get-parameter --name "/whymighta/db/database" --with-decryption --query "Parameter.Value" --output text --region us-east-1 2>/dev/null)
-export WHYMIGHTA_CHATGPT_API_URL=$(aws ssm get-parameter --name "/whymighta/api/chatgpt/url" --with-decryption --query "Parameter.Value" --output text --region us-east-1 2>/dev/null)
-export WHYMIGHTA_CHATGPT_API_KEY=$(aws ssm get-parameter --name "/whymighta/api/chatgpt/key" --with-decryption --query "Parameter.Value" --output text --region us-east-1 2>/dev/null)
+export WHYMIGHTA_OPENAI_API_KEY=$(aws ssm get-parameter --name "/whymighta/api/openai/key" --with-decryption --query "Parameter.Value" --output text --region us-east-1 2>/dev/null)
+export WHYMIGHTA_ANTHROPIC_API_KEY=$(aws ssm get-parameter --name "/whymighta/api/anthropic/key" --with-decryption --query "Parameter.Value" --output text --region us-east-1 2>/dev/null)
+export WHYMIGHTA_OPENAI_MODEL=$(aws ssm get-parameter --name "/whymighta/llm/openai/model" --with-decryption --query "Parameter.Value" --output text --region us-east-1 2>/dev/null)
+export WHYMIGHTA_ANTHROPIC_MODEL=$(aws ssm get-parameter --name "/whymighta/llm/anthropic/model" --with-decryption --query "Parameter.Value" --output text --region us-east-1 2>/dev/null)
 export WHYMIGHTA_WEATHER_API_KEY=$(aws ssm get-parameter --name "/whymighta/api/weather/key" --with-decryption --query "Parameter.Value" --output text --region us-east-1 2>/dev/null)
 export WHYMIGHTA_DISCORD_TOKEN=$(aws ssm get-parameter --name "/whymighta/discord/token" --with-decryption --query "Parameter.Value" --output text --region us-east-1 2>/dev/null)
 

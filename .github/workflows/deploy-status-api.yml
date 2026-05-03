@@ -1,0 +1,49 @@
+name: Deploy Status API Lambda
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'lambdas/status-api/**'
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v6
+        with:
+          role-to-assume: ${{ secrets.AWS_STATUS_API_ROLE_TO_ASSUME }}
+          aws-region: us-east-1
+
+      - name: Set up Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: '3.12'
+
+      - name: Install dependencies into package dir
+        working-directory: lambdas/status-api
+        run: pip install -r requirements.txt --target ./package --upgrade
+
+      - name: Zip Lambda package
+        working-directory: lambdas/status-api
+        run: |
+          cp lambda_function.py package/
+          cp -r probes package/
+          cd package
+          zip -r ../status-api.zip .
+
+      - name: Update Lambda function code
+        working-directory: lambdas/status-api
+        run: |
+          aws lambda update-function-code \
+            --function-name status-api \
+            --zip-file fileb://status-api.zip \
+            --region us-east-1

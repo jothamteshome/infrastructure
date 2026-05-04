@@ -25,17 +25,18 @@ async def main(event: dict) -> dict:
     if event.get("requestContext", {}).get("http", {}).get("method") == "OPTIONS":
         return {"statusCode": 204, "headers": cors_headers, "body": ""}
 
-    minecraft, sites, containers = await asyncio.gather(
+    minecraft, checked, containers = await asyncio.gather(
         check_all_minecraft_servers(),
         check_all_sites(),
         get_container_stats(),
     )
 
     body = {
-        "minecraft": minecraft,
-        "sites": sites,
-        "containers": containers,
-        "checked_at": int(time.time()),
+        "minecraft":   minecraft,
+        "sites":       checked["sites"],
+        "apis":        checked["apis"],
+        "containers":  containers,
+        "checked_at":  int(time.time()),
     }
 
     return {

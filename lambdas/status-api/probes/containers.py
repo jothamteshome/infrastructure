@@ -20,7 +20,9 @@ DOCKER_INSPECT_CMD = (
     "xargs docker inspect --format "
     "'{{.Name}}|{{.State.StartedAt}}|{{.RestartCount}}'"
 )
-    
+
+DOCKER_PS_CMD = "docker ps -a --format '{{.Names}}|{{.Status}}'"
+
 async def get_container_stats() -> dict:
     """
     Fetches per-container CPU and memory stats from the EC2 instance
@@ -30,13 +32,15 @@ async def get_container_stats() -> dict:
     session = aioboto3.Session()
     try:
         async with session.client("ssm", region_name=REGION) as ssm:
-            stats_id, inspect_id = await asyncio.gather(
+            stats_id, inspect_id, ps_id = await asyncio.gather(
                 _send_command(ssm, DOCKER_STATS_CMD),
                 _send_command(ssm, DOCKER_INSPECT_CMD),
+                _send_command(ssm, DOCKER_PS_CMD),
             )
-            stats_out, inspect_out = await asyncio.gather(
+            stats_out, inspect_out, ps_out = await asyncio.gather(
                 _poll_command(ssm, stats_id),
                 _poll_command(ssm, inspect_id),
+                _poll_command(ssm, ps_id),
             )
 
         if stats_out["Status"] != "Success":
@@ -46,6 +50,9 @@ async def get_container_stats() -> dict:
 
         if inspect_out["Status"] == "Success":
             _merge_inspect(containers, inspect_out["StandardOutputContent"])
+
+        if ps_out["Status"] == "Success":
+            _merge_ps(containers, ps_out["StandardOutputContent"])
 
         return containers
 
@@ -118,3 +125,18 @@ def _merge_inspect(containers: dict, raw: str) -> None:
 
         containers[name]["started_at"]     = started_at.strip()
         containers[name]["restart_count"]  = int(restart_count.strip())
+
+
+def _merge_ps(containers: dict, raw: str) -> None:
+    for line in raw.strip().splitlines():
+        parts = line.split("|", 1)
+        if len(parts) != 2:
+            continue
+
+        name, status = parts
+        name = name.strip()
+
+        if name in EXCLUDED_CONTAINERS or name in containers:
+            continue
+
+        containers[name] = {"online": False, "status": status.strip()}

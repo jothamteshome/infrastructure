@@ -2,12 +2,14 @@ import asyncio
 import aiohttp
 
 STATIC_SITES = [
-    ("snake-game",   "https://snake-game.whymighta.net"),
-    ("pixel-sorter", "https://pixel-sorter.whymighta.net"),
+    ("snake-game",     "https://snake-game.whymighta.net"),
+    ("pixel-sorter",   "https://pixel-sorter.whymighta.net"),
+    ("watch-together", "https://watch-together.whymighta.net"),
 ]
 
-WATCH_TOGETHER_FRONTEND_URL            = "https://watch-together.whymighta.net"
-WATCH_TOGETHER_BACKEND_HEALTH_ENDPOINT = "https://api.watch-together.whymighta.net/health"
+APIS = [
+    ("watch-together", "https://api.watch-together.whymighta.net/health"),
+]
 
 
 async def check_http(session: aiohttp.ClientSession, url: str) -> dict:
@@ -19,20 +21,17 @@ async def check_http(session: aiohttp.ClientSession, url: str) -> dict:
 
 
 async def check_all_sites() -> dict:
+    all_entries = STATIC_SITES + APIS
     async with aiohttp.ClientSession() as session:
-        all_urls = (
-            [url for _, url in STATIC_SITES]
-            + [WATCH_TOGETHER_FRONTEND_URL, WATCH_TOGETHER_BACKEND_HEALTH_ENDPOINT]
-        )
-        results = await asyncio.gather(*[check_http(session, url) for url in all_urls])
+        results = await asyncio.gather(*[check_http(session, url) for _, url in all_entries])
 
     n = len(STATIC_SITES)
     sites = {
         name: {"url": url, **results[i]}
         for i, (name, url) in enumerate(STATIC_SITES)
     }
-    sites["watch-together"] = {
-        "frontend": {"url": WATCH_TOGETHER_FRONTEND_URL,            **results[n]},
-        "backend":  {"url": WATCH_TOGETHER_BACKEND_HEALTH_ENDPOINT, **results[n + 1]},
+    apis = {
+        name: {"url": url, **results[n + i]}
+        for i, (name, url) in enumerate(APIS)
     }
-    return sites
+    return {"sites": sites, "apis": apis}

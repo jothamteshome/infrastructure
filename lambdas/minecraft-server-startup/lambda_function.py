@@ -47,14 +47,14 @@ def extract_queried_hostname(log_message: str) -> str | None:
       <version> <date> <hosted-zone-id> <query-type> <hostname>. <record-type> <response> ...
 
     Example:
-      1.0 2026-05-04T12:00:00Z Z1234ABCD UDP vanilla.mc.whymighta.net. A NOERROR ...
+      1.0 2026-05-04T14:58:28Z Z1234ABCD vanilla.mc.whymighta.net A NOERROR UDP ...
 
     The hostname has a trailing dot which we strip.
     """
     parts = log_message.strip().split()
     if len(parts) < 5:
         return None
-    hostname = parts[4].rstrip(".")
+    hostname = parts[3].rstrip(".")
     return hostname.lower()
 
 

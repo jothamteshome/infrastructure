@@ -25,6 +25,18 @@ jobs:
         role-to-assume: ${{ secrets.AWS_PERPETUAL_APP_HOST_ROLE_TO_ASSUME }}
         aws-region: us-east-1
 
+    - name: Update SSM Parameters
+      run: |
+        aws ssm put-parameter --name "/perpetual-app-host/db/username" --value "${{ secrets.PERPETUAL_APP_HOST_POSTGRES_USER }}" --type "String" --overwrite
+        aws ssm put-parameter --name "/perpetual-app-host/db/password" --value "${{ secrets.PERPETUAL_APP_HOST_POSTGRES_PASSWORD }}" --type "SecureString" --overwrite
+        aws ssm put-parameter --name "/perpetual-app-host/pihole/webpassword" --value "${{ secrets.PERPETUAL_APP_HOST_PIHOLE_WEBPASSWORD }}" --type "SecureString" --overwrite
+        aws ssm put-parameter --name "/perpetual-app-host/wireguard/serverurl" --value "${{ secrets.PERPETUAL_APP_HOST_WIREGUARD_SERVERURL }}" --type "String" --overwrite
+        aws ssm put-parameter --name "/perpetual-app-host/wireguard/peers" --value "${{ secrets.PERPETUAL_APP_HOST_WIREGUARD_PEERS }}" --type "String" --overwrite
+        aws ssm put-parameter --name "/perpetual-app-host/open-webui/anthropic/key" --value "${{ secrets.PERPETUAL_APP_HOST_OPEN_WEBUI_ANTHROPIC_KEY }}" --type "SecureString" --overwrite
+        aws ssm put-parameter --name "/perpetual-app-host/open-webui/openai/key" --value "${{ secrets.PERPETUAL_APP_HOST_OPEN_WEBUI_OPENAI_KEY }}" --type "SecureString" --overwrite
+        aws ssm put-parameter --name "/perpetual-app-host/open-webui/db/username" --value "${{ secrets.PERPETUAL_APP_HOST_OPEN_WEBUI_DB_USERNAME }}" --type "String" --overwrite
+        aws ssm put-parameter --name "/perpetual-app-host/open-webui/db/password" --value "${{ secrets.PERPETUAL_APP_HOST_OPEN_WEBUI_DB_PASSWORD }}" --type "SecureString" --overwrite
+
     - name: Deploy on EC2
       run: |
         command_id=$(aws ssm send-command \

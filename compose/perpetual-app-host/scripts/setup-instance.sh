@@ -47,9 +47,9 @@ else
     echo "Stub listener already disabled, skipping"
 fi
 
-echo "=== Configuring swap (512MB) ==="
+echo "=== Configuring swap (1GB) ==="
 if [ ! -f /swapfile ]; then
-    fallocate -l 512M /swapfile
+    fallocate -l 1G /swapfile
     chmod 600 /swapfile
     mkswap /swapfile
     swapon /swapfile
@@ -111,12 +111,19 @@ export WATCH_TOGETHER_YOUTUBE_API_KEY=$(aws ssm get-parameter --name "/watch-tog
 
 # pihole
 echo "Fetching PiHole environment variables from AWS SSM..."
-export PIHOLE_WEBPASSWORD=$(aws ssm get-parameter --name "/pihole/webpassword" --with-decryption --query "Parameter.Value" --output text --region us-east-1 2>/dev/null)
+export PIHOLE_WEBPASSWORD=$(aws ssm get-parameter --name "/perpetual-app-host/pihole/webpassword" --with-decryption --query "Parameter.Value" --output text --region us-east-1 2>/dev/null)
 
 # wireguard
 echo "Fetching WireGuard environment variables from AWS SSM..."
-export WIREGUARD_SERVERURL=$(aws ssm get-parameter --name "/wireguard/serverurl" --with-decryption --query "Parameter.Value" --output text --region us-east-1 2>/dev/null)
-export WIREGUARD_PEERS=$(aws ssm get-parameter --name "/wireguard/peers" --with-decryption --query "Parameter.Value" --output text --region us-east-1 2>/dev/null)
+export WIREGUARD_SERVERURL=$(aws ssm get-parameter --name "/perpetual-app-host/wireguard/serverurl" --with-decryption --query "Parameter.Value" --output text --region us-east-1 2>/dev/null)
+export WIREGUARD_PEERS=$(aws ssm get-parameter --name "/perpetual-app-host/wireguard/peers" --with-decryption --query "Parameter.Value" --output text --region us-east-1 2>/dev/null)
+
+# open-webui
+echo "Fetching Open-WebUI environment variables from AWS SSM..."
+export OPEN_WEBUI_ANTHROPIC_KEY=$(aws ssm get-parameter --name "/perpetual-app-host/open-webui/anthropic/key" --with-decryption --query "Parameter.Value" --output text --region us-east-1 2>/dev/null)
+export OPEN_WEBUI_OPENAI_KEY=$(aws ssm get-parameter --name "/perpetual-app-host/open-webui/openai/key" --with-decryption --query "Parameter.Value" --output text --region us-east-1 2>/dev/null)
+export OPEN_WEBUI_DB_USERNAME=$(aws ssm get-parameter --name "/perpetual-app-host/open-webui/db/username" --with-decryption --query "Parameter.Value" --output text --region us-east-1 2>/dev/null)
+export OPEN_WEBUI_DB_PASSWORD=$(aws ssm get-parameter --name "/perpetual-app-host/open-webui/db/password" --with-decryption --query "Parameter.Value" --output text --region us-east-1 2>/dev/null)
 
 echo "All environment variables loaded from SSM!"
 EOF

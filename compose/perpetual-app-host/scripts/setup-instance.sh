@@ -120,8 +120,6 @@ export WIREGUARD_PEERS=$(aws ssm get-parameter --name "/perpetual-app-host/wireg
 
 # open-webui
 echo "Fetching Open-WebUI environment variables from AWS SSM..."
-export OPEN_WEBUI_ANTHROPIC_KEY=$(aws ssm get-parameter --name "/perpetual-app-host/open-webui/anthropic/key" --with-decryption --query "Parameter.Value" --output text --region us-east-1 2>/dev/null)
-export OPEN_WEBUI_OPENAI_KEY=$(aws ssm get-parameter --name "/perpetual-app-host/open-webui/openai/key" --with-decryption --query "Parameter.Value" --output text --region us-east-1 2>/dev/null)
 export OPEN_WEBUI_DB_USERNAME=$(aws ssm get-parameter --name "/perpetual-app-host/open-webui/db/username" --with-decryption --query "Parameter.Value" --output text --region us-east-1 2>/dev/null)
 export OPEN_WEBUI_DB_PASSWORD=$(aws ssm get-parameter --name "/perpetual-app-host/open-webui/db/password" --with-decryption --query "Parameter.Value" --output text --region us-east-1 2>/dev/null)
 export OPEN_WEBUI_DB_DATABASE=$(aws ssm get-parameter --name "/perpetual-app-host/open-webui/db/database" --with-decryption --query "Parameter.Value" --output text --region us-east-1 2>/dev/null)

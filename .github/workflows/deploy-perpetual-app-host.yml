@@ -36,6 +36,7 @@ jobs:
         aws ssm put-parameter --name "/perpetual-app-host/open-webui/openai/key" --value "${{ secrets.PERPETUAL_APP_HOST_OPEN_WEBUI_OPENAI_KEY }}" --type "SecureString" --overwrite
         aws ssm put-parameter --name "/perpetual-app-host/open-webui/db/username" --value "${{ secrets.PERPETUAL_APP_HOST_OPEN_WEBUI_DB_USERNAME }}" --type "String" --overwrite
         aws ssm put-parameter --name "/perpetual-app-host/open-webui/db/password" --value "${{ secrets.PERPETUAL_APP_HOST_OPEN_WEBUI_DB_PASSWORD }}" --type "SecureString" --overwrite
+        aws ssm put-parameter --name "/perpetual-app-host/open-webui/db/database" --value "${{ secrets.PERPETUAL_APP_HOST_OPEN_WEBUI_DB_DATABASE }}" --type "String" --overwrite
 
     - name: Deploy on EC2
       run: |

@@ -216,7 +216,7 @@ services:
       - ENABLE_IMAGE_GENERATION=False
       - ENABLE_CODE_INTERPRETER=False
       - WEBUI_WORKERS=1
-      - DATABASE_URL=postgresql://${OPENWEBUI_DB_USER}:${OPENWEBUI_DB_PASSWORD}@postgres:5432/openwebui
+      - DATABASE_URL=postgresql://${OPEN_WEBUI_DB_USERNAME}:${OPEN_WEBUI_DB_PASSWORD}@postgres:5432/${OPEN_WEBUI_DB_DATABASE}
     volumes:
       - open_webui:/app/backend/data
     depends_on:

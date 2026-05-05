@@ -222,6 +222,8 @@ services:
     depends_on:
       postgres:
         condition: service_healthy
+      db-init:
+        condition: service_completed_successfully
 
 volumes:
   postgres_data:

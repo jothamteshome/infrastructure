@@ -48,11 +48,6 @@ services:
         psql -h postgres -U "$POSTGRES_USER" -d postgres -c "GRANT ALL PRIVILEGES ON DATABASE \"$WHYMIGHTA_DB_DATABASE\" TO \"$WHYMIGHTA_DB_USERNAME\";" || true
         psql -h postgres -U "$POSTGRES_USER" -d postgres -c "ALTER DATABASE \"$WHYMIGHTA_DB_DATABASE\" OWNER TO \"$WHYMIGHTA_DB_USERNAME\";" || true
 
-        psql -h postgres -U "$POSTGRES_USER" -d postgres -c "CREATE USER \"$OPEN_WEBUI_DB_USERNAME\" WITH PASSWORD '$OPEN_WEBUI_DB_PASSWORD';" || true
-        psql -h postgres -U "$POSTGRES_USER" -d postgres -c "CREATE DATABASE \"$OPEN_WEBUI_DB_DATABASE\" OWNER \"$OPEN_WEBUI_DB_USERNAME\";" || true
-        psql -h postgres -U "$POSTGRES_USER" -d postgres -c "GRANT ALL PRIVILEGES ON DATABASE \"$OPEN_WEBUI_DB_DATABASE\" TO \"$OPEN_WEBUI_DB_USERNAME\";" || true
-        psql -h postgres -U "$POSTGRES_USER" -d postgres -c "ALTER DATABASE \"$OPEN_WEBUI_DB_DATABASE\" OWNER TO \"$OPEN_WEBUI_DB_USERNAME\";" || true
-
   whymighta:
     container_name: whymighta
     image: ghcr.io/jothamteshome/whymighta:latest
@@ -197,40 +192,11 @@ services:
         max-size: "10m"
         max-file: "3"
 
-  open-webui:
-    container_name: open-webui
-    image: ghcr.io/open-webui/open-webui:main
-    restart: always
-    deploy:
-      resources:
-        limits:
-          memory: 512m
-    logging:
-      driver: json-file
-      options:
-        max-size: "10m"
-        max-file: "3"
-    environment:
-      - RAG_EMBEDDING_ENGINE=openai
-      - AUDIO_STT_ENGINE=webapi
-      - ENABLE_IMAGE_GENERATION=False
-      - ENABLE_CODE_INTERPRETER=False
-      - WEBUI_WORKERS=1
-      - DATABASE_URL=postgresql://${OPEN_WEBUI_DB_USERNAME}:${OPEN_WEBUI_DB_PASSWORD}@postgres:5432/${OPEN_WEBUI_DB_DATABASE}
-    volumes:
-      - open_webui:/app/backend/data
-    depends_on:
-      postgres:
-        condition: service_healthy
-      db-init:
-        condition: service_completed_successfully
-
 volumes:
   postgres_data:
   pihole_data:
   pihole_dnsmasq:
   wireguard_config:
-  open_webui:
 
 networks:
   default:

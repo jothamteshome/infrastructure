@@ -118,12 +118,6 @@ echo "Fetching WireGuard environment variables from AWS SSM..."
 export WIREGUARD_SERVERURL=$(aws ssm get-parameter --name "/perpetual-app-host/wireguard/serverurl" --with-decryption --query "Parameter.Value" --output text --region us-east-1 2>/dev/null)
 export WIREGUARD_PEERS=$(aws ssm get-parameter --name "/perpetual-app-host/wireguard/peers" --with-decryption --query "Parameter.Value" --output text --region us-east-1 2>/dev/null)
 
-# open-webui
-echo "Fetching Open-WebUI environment variables from AWS SSM..."
-export OPEN_WEBUI_DB_USERNAME=$(aws ssm get-parameter --name "/perpetual-app-host/open-webui/db/username" --with-decryption --query "Parameter.Value" --output text --region us-east-1 2>/dev/null)
-export OPEN_WEBUI_DB_PASSWORD=$(aws ssm get-parameter --name "/perpetual-app-host/open-webui/db/password" --with-decryption --query "Parameter.Value" --output text --region us-east-1 2>/dev/null)
-export OPEN_WEBUI_DB_DATABASE=$(aws ssm get-parameter --name "/perpetual-app-host/open-webui/db/database" --with-decryption --query "Parameter.Value" --output text --region us-east-1 2>/dev/null)
-
 echo "All environment variables loaded from SSM!"
 EOF
 chmod +x /etc/profile.d/init-env.sh
